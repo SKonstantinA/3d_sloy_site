@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+  {% macro product_card(product, extra_class, rank) %}
+  <article class="product-card {{ extra_class }}"
+           style="--accent: {{ product.accent }}"
+           data-id="{{ product.id }}"
+           data-tags="{{ product.tags|join('|')|lower }}"
+           data-search="{{ (product.title ~ ' ' ~ product.short ~ ' ' ~ product.category ~ ' ' ~ product.tags|join(' '))|lower }}"
+           data-popular="{{ 1 if product.popular else 0 }}"
+           data-new="{{ 1 if product.new else 0 }}"
+           data-price="{{ product.price }}"
+           data-date="{{ product.added }}"
+           data-rank="{{ rank }}">
+    <div class="card-media">
+      <img src="{{ url_for('static', filename=product.image) }}" alt="{{ product.title }}" loading="lazy" width="800" height="600">
+      <div class="card-badges">
+        {% if product.new %}
+          <span class="badge badge--new">Новинка</span>
+        {% elif product.popular %}
+          <span class="badge badge--hit">Хит</span>
+        {% endif %}
+      </div>
+      <button type="button" class="quick-view" data-open-product="{{ product.id }}" tabindex="-1" aria-hidden="true">
+        Быстрый просмотр
+        <span aria-hidden="true">↗</span>
+      </button>
+    </div>
+
+    <div class="card-body">
+      <div class="card-kicker">
+        <span>{{ product.category }}</span>
+        <span class="card-rating" aria-label="Рейтинг {{ product.rating }} из 5">★ {{ product.rating }}</span>
+      </div>
+
+      <h3 class="card-title">{{ product.title }}</h3>
+      <p class="card-desc">{{ product.short }}</p>
+
+      <ul class="card-tags" aria-label="Теги">
+        {% for tag in product.tags[:3] %}
+          <li>#{{ tag }}</li>
+        {% endfor %}
+      </ul>
+
+      <div class="card-footer">
+        <div class="card-price">
+          <span class="price">{{ product.price|price }}</span>
+          {% if product.old_price %}<s>{{ product.old_price|price }}</s>{% endif %}
+        </div>
+        <button type="button" class="details-btn" data-open-product="{{ product.id }}">
+          Посмотреть подробно
+          <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </article>
+  {% endmacro %}
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ site.brand }} — 3D-печать вещей для дома и походов</title>
+  <meta name="description" content="{{ site.description }}">
+  <meta name="theme-color" content="#f7f4ee">
+
+  <meta property="og:title" content="{{ site.brand }} — уют, напечатанный слой за слоем">
+  <meta property="og:description" content="{{ site.description }}">
+  <meta property="og:type" content="website">
+
+  <link rel="icon" href="{{ url_for('static', filename='favicon.svg') }}" type="image/svg+xml">
+  <script>document.documentElement.classList.add("js");</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:wght@500;600;700&family=Lora:ital,wght@1,500;1,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <a class="skip-link" href="#catalog">Перейти к каталогу</a>
+
+  <!-- Если JavaScript выключен, каталог всё равно виден, но фильтры и форма не работают -->
+  <noscript>
+    <p class="noscript-note">
+      Поиск, фильтры и оформление заявки работают на JavaScript. Без него весь каталог ниже остаётся доступен —
+      а заказать можно в <a href="{{ site.vk }}" target="_blank" rel="noopener">ВКонтакте</a> или по телефону
+      <a href="tel:{{ site.phone|replace(' ', '')|replace('(', '')|replace(')', '')|replace('-', '') }}">{{ site.phone }}</a>.
+    </p>
+  </noscript>
+
+  <!-- Бегущая строка сверху -->
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker__track">
+      <span>Печать на заказ <b>✳</b> PLA / PETG <b>✳</b> доставка по России <b>✳</b> ручная работа <b>✳</b> упаковка без пластика <b>✳</b></span>
+      <span>Печать на заказ <b>✳</b> PLA / PETG <b>✳</b> доставка по России <b>✳</b> ручная работа <b>✳</b> упаковка без пластика <b>✳</b></span>
+    </div>
+  </div>
+
+  <header class="site-header" id="site-header">
+    <div class="container header__inner">
+      <a class="logo" href="#top">
+        <span class="logo__mark" aria-hidden="true">
+          <svg viewBox="0 0 40 40" fill="none">
+            <path d="M20 3 37 12.5 20 22 3 12.5 20 3Z" fill="currentColor"/>
+            <path d="m3 20 17 9.5L37 20" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="m3 27 17 9.5L37 27" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        <span class="logo__text">СЛОЙ<span class="logo__dot">.</span><small>3D-студия</small></span>
+      </a>
+
+      <nav class="nav" aria-label="Основная навигация">
+        <a href="#catalog">Каталог</a>
+        <a href="#popular">Популярное</a>
+        <a href="#process">Как это работает</a>
+        <a href="#faq">Вопросы</a>
+      </nav>
+
+      <div class="header__actions">
+        <a class="header__phone" href="tel:{{ site.phone|replace(' ', '')|replace('(', '')|replace(')', '')|replace('-', '') }}">
+          {{ site.phone }}
+        </a>
+        <button class="btn btn--accent btn--sm" type="button" data-open-custom>
+          Своя идея
+          <svg class="btn__arrow" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <button class="burger" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="mobile-menu">
+          <span></span><span></span>
+        </button>
+      </div>
+    </div>
+
+    <div class="mobile-menu" id="mobile-menu">
+      <nav class="mobile-menu__nav" aria-label="Мобильная навигация">
+        <a href="#catalog">Каталог <span>10 изделий</span></a>
+        <a href="#popular">Популярное <span>хиты</span></a>
+        <a href="#new">Новинки <span>свежее</span></a>
+        <a href="#process">Как это работает <span>4 шага</span></a>
+        <a href="#faq">Вопросы <span>FAQ</span></a>
+      </nav>
+      <div class="mobile-menu__footer">
+        <a href="tel:{{ site.phone|replace(' ', '')|replace('(', '')|replace(')', '')|replace('-', '') }}">{{ site.phone }}</a>
+        <button class="btn btn--accent" type="button" data-open-custom>Обсудить свой проект</button>
+      </div>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- Первый экран -->
+    <section class="hero">
+      <div class="hero__glow" aria-hidden="true"></div>
+      <div class="container hero__inner">
+        <div class="hero__content">
+          <p class="eyebrow reveal">
+            <span class="eyebrow__dot"></span>
+            Мастерская 3D-печати · {{ site.city }}
+          </p>
+          <h1 class="hero__title reveal" style="--delay: .06s">
+            Уют, напечатанный <em>слой за слоем</em>.
+          </h1>
+          <p class="hero__lead reveal" style="--delay: .12s">
+            Домашние аксессуары, органайзеры и походные мелочи, которые приятно держать в руках.
+            Печатаем небольшими партиями из прочного PLA и PETG — отправляем за 2–5 дней.
+          </p>
+          <div class="hero__actions reveal" style="--delay: .18s">
+            <a class="btn btn--accent btn--lg" href="#catalog">
+              Выбрать изделие
+              <svg class="btn__arrow" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </a>
+            <a class="btn btn--ghost btn--lg" href="#process">
+              Как мы печатаем
+              <span class="btn__round" aria-hidden="true">↘</span>
+            </a>
+          </div>
+
+          <div class="hero__proof reveal" style="--delay: .24s">
+            <div class="proof__rating" aria-label="Рейтинг 4.9 из 5">
+              <span class="stars" aria-hidden="true">★★★★★</span>
+              <strong>{{ site.rating }}</strong>
+              <span>{{ site.orders_count }}+ заказов</span>
+            </div>
+            <span class="proof__divider" aria-hidden="true"></span>
+            <div class="proof__item">
+              <span class="proof__pulse" aria-hidden="true"></span>
+              Печатаем сегодня — отправляем завтра
+            </div>
+          </div>
+
+          <div class="hero__tags reveal" style="--delay: .3s">
+            <span>Часто ищут:</span>
+            <button type="button" data-jump-tag="дом">Для дома</button>
+            <button type="button" data-jump-tag="туризм">В поход</button>
+            <button type="button" data-jump-tag="органайзеры">Порядок</button>
+            <button type="button" data-jump-tag="гаджеты">Для техники</button>
+          </div>
+        </div>
+
+        <div class="hero__visual reveal" id="hero-visual" style="--delay: .18s">
+          <div class="hero__blob" aria-hidden="true"></div>
+          <div class="hero__grid" aria-hidden="true"></div>
+
+          <article class="float-card float-card--main" style="--rot: -4deg; --depth: .7"
+                   data-open-product="{{ hero_main.id }}" tabindex="0" role="button"
+                   aria-label="Посмотреть подробно: {{ hero_main.title }}">
+            <div class="float-card__media">
+              <img src="{{ url_for('static', filename=hero_main.image) }}" alt="{{ hero_main.title }}" width="800" height="600">
+              {% if hero_main.badge %}<span class="badge badge--hit">{{ hero_main.badge }}</span>{% endif %}
+            </div>
+            <div class="float-card__caption">
+              <div>
+                <span>{{ hero_main.category }}</span>
+                <strong>{{ hero_main.title }}</strong>
+              </div>
+              <b>{{ hero_main.price|price }}</b>
+            </div>
+          </article>
+
+          <article class="float-card float-card--small float-card--one" style="--rot: 5deg; --depth: 1.3"
+                   data-open-product="{{ hero_secondary.id }}" tabindex="0" role="button"
+                   aria-label="Посмотреть подробно: {{ hero_secondary.title }}">
+            <img src="{{ url_for('static', filename=hero_secondary.image) }}" alt="{{ hero_secondary.title }}" width="800" height="600">
+            <span class="float-card__label">{{ hero_secondary.title }}</span>
+          </article>
+
+          <article class="float-card float-card--small float-card--two" style="--rot: -7deg; --depth: 1.7"
+                   data-open-product="{{ hero_tertiary.id }}" tabindex="0" role="button"
+                   aria-label="Посмотреть подробно: {{ hero_tertiary.title }}">
+            <img src="{{ url_for('static', filename=hero_tertiary.image) }}" alt="{{ hero_tertiary.title }}" width="800" height="600">
+            <span class="float-card__label">{{ hero_tertiary.title }}</span>
+          </article>
+
+          <div class="hero-chip hero-chip--one" style="--depth: 2">
+            <span class="hero-chip__icon" aria-hidden="true">◒</span>
+            <span><b>Слой 0.16 мм</b><small>гладкая поверхность</small></span>
+          </div>
+          <div class="hero-chip hero-chip--two" style="--depth: 2.2">
+            <span class="hero-chip__icon hero-chip__icon--lime" aria-hidden="true">✓</span>
+            <span><b>Проверено руками</b><small>каждое изделие</small></span>
+          </div>
+
+          <div class="spin-badge" aria-hidden="true">
+            <svg class="spin-badge__text" viewBox="0 0 120 120">
+              <defs>
+                <path id="badge-circle" d="M60,60 m-43,0 a43,43 0 1,1 86,0 a43,43 0 1,1 -86,0"/>
+              </defs>
+              <text>
+                <textPath href="#badge-circle">СЛОЙ · ПЕЧАТЬ НА ЗАКАЗ · СЛОЙ · ВРУЧНУЮ · </textPath>
+              </text>
+            </svg>
+            <span class="spin-badge__arrow">↗</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Цифры -->
+    <section class="stats" aria-label="Мастерская в цифрах">
+      <div class="container">
+        <div class="stats__grid reveal">
+          <div class="stat">
+            <span class="stat__value"><span data-count="10">10</span></span>
+            <span class="stat__label">готовых изделий<br>в каталоге</span>
+          </div>
+          <div class="stat">
+            <span class="stat__value"><span data-count="48">48</span><small>ч</small></span>
+            <span class="stat__label">средний срок<br>печати заказа</span>
+          </div>
+          <div class="stat">
+            <span class="stat__value"><span data-count="180">180</span><small>+</small></span>
+            <span class="stat__label">заказов уехали<br>к своим хозяевам</span>
+          </div>
+          <div class="stat">
+            <span class="stat__value"><span data-count="4.9" data-decimals="1">4.9</span><small>/ 5</small></span>
+            <span class="stat__label">средняя оценка<br>от покупателей</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Популярное -->
+    <section class="section popular" id="popular">
+      <div class="container">
+        <header class="section-head reveal">
+          <div>
+            <p class="eyebrow"><span class="eyebrow__dot"></span> 01 / Выбор покупателей</p>
+            <h2>Популярное, что заказывают <em>чаще всего</em></h2>
+          </div>
+          <div class="section-head__side">
+            <p>Проверенные формы, которые уже живут в домах и рюкзаках. Все изделия есть в наличии под заказ.</p>
+            <a class="text-link" href="#catalog">
+              Смотреть весь каталог
+              <span aria-hidden="true">→</span>
+            </a>
+          </div>
+        </header>
+
+        <div class="popular-grid">
+          {% for product in popular %}
+            {{ product_card(product, 'product-card--featured' if loop.first else '', loop.index) }}
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+
+    <!-- Новинки -->
+    {% if new_products %}
+    <section class="section new" id="new">
+      <div class="container">
+        <header class="section-head section-head--compact reveal">
+          <div>
+            <p class="eyebrow"><span class="eyebrow__dot"></span> 02 / Только из принтера</p>
+            <h2>Новинки <em>этого сезона</em></h2>
+          </div>
+          <div class="rail-controls" aria-label="Прокрутка новинок">
+            <button type="button" class="rail-btn" data-rail-prev aria-label="Назад">
+              <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M12.5 4.5 7 10l5.5 5.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <button type="button" class="rail-btn" data-rail-next aria-label="Вперёд">
+              <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M7.5 4.5 13 10l-5.5 5.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
+        </header>
+      </div>
+
+      <div class="rail-wrap reveal">
+        <div class="rail" id="new-rail">
+          {% for product in new_products %}
+            {{ product_card(product, 'product-card--rail', loop.index) }}
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+    {% endif %}
+
+    <!-- Каталог -->
+    <section class="section catalog" id="catalog">
+      <div class="container">
+        <header class="section-head reveal">
+          <div>
+            <p class="eyebrow"><span class="eyebrow__dot"></span> 03 / Каталог</p>
+            <h2>Найдите свою <em>вещь</em></h2>
+          </div>
+          <div class="section-head__side">
+            <p>Ищите по названию, тегу или настроению. Всё, что найдёте, можно заказать в другом цвете.</p>
+          </div>
+        </header>
+
+        <div class="catalog-toolbar reveal">
+          <div class="toolbar__top">
+            <div class="tabs" role="tablist" aria-label="Тип подборки">
+              <button type="button" class="tab is-active" role="tab" aria-selected="true" data-tab="all">
+                Все <span>{{ products|length }}</span>
+              </button>
+              <button type="button" class="tab" role="tab" aria-selected="false" data-tab="popular">
+                Популярное <span>{{ popular_count }}</span>
+              </button>
+              <button type="button" class="tab" role="tab" aria-selected="false" data-tab="new">
+                Новое <span>{{ new_count }}</span>
+              </button>
+            </div>
+
+            <div class="search">
+              <svg class="search__icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                <circle cx="9" cy="9" r="5.5" stroke="currentColor" stroke-width="1.6"/>
+                <path d="m13.5 13.5 3 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+              </svg>
+              <label class="sr-only" for="search-input">Поиск по каталогу</label>
+              <input type="search" id="search-input" placeholder="Найти изделие или тег…" autocomplete="off">
+              <button class="search__clear" type="button" id="search-clear" aria-label="Очистить поиск" hidden>×</button>
+              <kbd aria-hidden="true">/</kbd>
+            </div>
+
+            <label class="sort">
+              <span class="sr-only">Сортировка</span>
+              <select id="sort-select">
+                <option value="default">По популярности</option>
+                <option value="new">Сначала новые</option>
+                <option value="price-asc">Сначала дешевле</option>
+                <option value="price-desc">Сначала дороже</option>
+              </select>
+              <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m4 6 4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </label>
+          </div>
+
+          <div class="toolbar__bottom">
+            <div class="tag-list" id="tag-list" role="group" aria-label="Фильтр по тегам">
+              <button type="button" class="chip is-active" data-tag="all">Все теги</button>
+              {% for tag in tags %}
+                <button type="button" class="chip" data-tag="{{ tag.name|lower }}">{{ tag.name }} <span>{{ tag.count }}</span></button>
+              {% endfor %}
+            </div>
+            <button type="button" class="reset-btn" id="reset-filters" hidden>Сбросить ×</button>
+          </div>
+        </div>
+
+        <div class="catalog-meta reveal">
+          <p id="results-count" aria-live="polite">Показано {{ products|length }} {{ products|length|plural('изделие', 'изделия', 'изделий') }}</p>
+          <p class="catalog-meta__hint">Нажмите на карточку, чтобы увидеть детали</p>
+        </div>
+
+        <div class="catalog-grid" id="catalog-grid">
+          {% for product in products %}
+            {{ product_card(product, '', loop.index) }}
+          {% endfor %}
+        </div>
+
+        <div class="empty-state" id="empty-state" hidden>
+          <div class="empty-state__mark" aria-hidden="true">:(</div>
+          <h3>Ничего не нашлось</h3>
+          <p>Попробуйте другой запрос или сбросьте фильтры. А если нужного нет — мы можем напечатать по вашей идее.</p>
+          <div class="empty-state__actions">
+            <button type="button" class="btn btn--ghost" id="empty-reset">Сбросить фильтры</button>
+            <button type="button" class="btn btn--accent" data-open-custom>Предложить идею</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Как это работает -->
+    <section class="section process" id="process">
+      <div class="container">
+        <header class="section-head section-head--compact reveal">
+          <div>
+            <p class="eyebrow"><span class="eyebrow__dot"></span> 04 / Как это работает</p>
+            <h2>От идеи до посылки — <em>четыре шага</em></h2>
+          </div>
+          <div class="section-head__side">
+            <p>Никаких сложных настроек. Вы говорите, что нужно, — мы берём печать, сборку и упаковку на себя.</p>
+          </div>
+        </header>
+
+        <ol class="steps">
+          <li class="step reveal" style="--delay: 0s">
+            <span class="step__num">01</span>
+            <div class="step__icon" aria-hidden="true">
+              <svg viewBox="0 0 40 40" fill="none">
+                <path d="M8 14.5 20 8l12 6.5v13L20 34 8 27.5v-13Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+                <path d="m8 14.5 12 6.5 12-6.5M20 21v13" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <h3>Выбираете или придумываете</h3>
+            <p>Берёте готовое изделие из каталога или присылаете фото, эскиз, STL-файл.</p>
+          </li>
+          <li class="step reveal" style="--delay: .08s">
+            <span class="step__num">02</span>
+            <div class="step__icon" aria-hidden="true">
+              <svg viewBox="0 0 40 40" fill="none">
+                <path d="M9 27V13a4 4 0 0 1 4-4h14a4 4 0 0 1 4 4v14a4 4 0 0 1-4 4H13a4 4 0 0 1-4-4Z" stroke="currentColor" stroke-width="1.7"/>
+                <path d="m13 27 5-6 4 4 3-4 2 2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="16" cy="15" r="2" stroke="currentColor" stroke-width="1.7"/>
+              </svg>
+            </div>
+            <h3>Согласуем детали</h3>
+            <p>Подбираем цвет, материал и толщину слоя. Фиксируем цену и срок до начала печати.</p>
+          </li>
+          <li class="step reveal" style="--delay: .16s">
+            <span class="step__num">03</span>
+            <div class="step__icon" aria-hidden="true">
+              <svg viewBox="0 0 40 40" fill="none">
+                <path d="M11 31V17a3 3 0 0 1 3-3h12a3 3 0 0 1 3 3v14" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+                <path d="M8 31h24M15 14V9h10v5M15 21h10M15 25h6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <h3>Печатаем и проверяем</h3>
+            <p>Снимаем поддержки, шлифуем края и проверяем каждую деталь руками. Без спешки.</p>
+          </li>
+          <li class="step reveal" style="--delay: .24s">
+            <span class="step__num">04</span>
+            <div class="step__icon" aria-hidden="true">
+              <svg viewBox="0 0 40 40" fill="none">
+                <path d="M20 7 32 13v10c0 6-5.5 9.5-12 12-6.5-2.5-12-6-12-12V13l12-6Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+                <path d="m15 20 3.5 3.5L26 17" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <h3>Упаковываем и отправляем</h3>
+            <p>Кладём в крафт-упаковку без лишнего пластика. Доставка 2–5 дней по России.</p>
+          </li>
+        </ol>
+
+        <div class="process-note reveal">
+          <span class="process-note__pulse" aria-hidden="true"></span>
+          Средний срок печати — 48 часов. Если нужно срочно, напишите: постараемся ускорить.
+          <a href="#custom">Обсудить срок →</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Своя идея -->
+    <section class="section custom" id="custom">
+      <div class="container">
+        <div class="custom__card reveal">
+          <div class="custom__patterns" aria-hidden="true">
+            <span></span><span></span><span></span>
+          </div>
+
+          <div class="custom__content">
+            <p class="eyebrow eyebrow--light"><span class="eyebrow__dot"></span> Печать по вашей идее</p>
+            <h2>Не нашли нужное? <em>Напечатаем своё.</em></h2>
+            <p>Пришлите фото, эскиз или готовый STL-файл. Подберём материал, посчитаем стоимость и напечатаем деталь — от одной штуки.</p>
+            <div class="custom__actions">
+              <button class="btn btn--lime btn--lg" type="button" data-open-custom>
+                Обсудить проект
+                <svg class="btn__arrow" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                  <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+              <a class="btn btn--outline-light btn--lg" href="{{ site.telegram }}" target="_blank" rel="noopener">
+                Написать в Telegram
+              </a>
+            </div>
+            <p class="custom__note">Отвечаем в течение рабочего дня · {{ site.work_hours }}</p>
+          </div>
+
+          <div class="custom__visual" aria-hidden="true">
+            <div class="custom__photo">
+              <img src="{{ url_for('static', filename=hero_main.image) }}" alt="" width="800" height="600">
+            </div>
+            <span class="custom__sticker">от 500 ₽<small>за деталь</small></span>
+            <span class="custom__ring"></span>
+            <span class="custom__tag">STL · 3MF · OBJ</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Вопросы -->
+    <section class="section faq" id="faq">
+      <div class="container faq__inner">
+        <header class="faq__head reveal">
+          <p class="eyebrow"><span class="eyebrow__dot"></span> 05 / Вопросы</p>
+          <h2>Коротко <em>о важном</em></h2>
+          <p>Собрали то, что чаще всего спрашивают перед первым заказом. Если вашего вопроса нет — просто напишите.</p>
+          <a class="text-link" href="{{ site.telegram }}" target="_blank" rel="noopener">
+            Задать свой вопрос <span aria-hidden="true">↗</span>
+          </a>
+        </header>
+
+        <div class="faq__list">
+          <div class="faq-item reveal">
+            <button type="button" class="faq-item__question" aria-expanded="false">
+              <span>Сколько ждать заказ?</span>
+              <span class="faq-item__plus" aria-hidden="true"></span>
+            </button>
+            <div class="faq-item__answer">
+              <p>Обычно 2–5 дней: 1–2 дня на печать и сборку, остальное — доставка. Срок зависит от изделия и загрузки мастерской. Точную дату называем при подтверждении заказа.</p>
+            </div>
+          </div>
+          <div class="faq-item reveal">
+            <button type="button" class="faq-item__question" aria-expanded="false">
+              <span>Можно выбрать цвет и материал?</span>
+              <span class="faq-item__plus" aria-hidden="true"></span>
+            </button>
+            <div class="faq-item__answer">
+              <p>Да. В наличии 12 матовых цветов PLA и PETG. Для изделий, которые контактируют с водой или едой, используем PETG. Пришлём фото образцов, чтобы вы выбрали спокойно.</p>
+            </div>
+          </div>
+          <div class="faq-item reveal">
+            <button type="button" class="faq-item__question" aria-expanded="false">
+              <span>Напечатаете по моему файлу?</span>
+              <span class="faq-item__plus" aria-hidden="true"></span>
+            </button>
+            <div class="faq-item__answer">
+              <p>Конечно. Подойдут STL, 3MF или OBJ. Если файла нет — пришлите фото или эскиз, поможем подготовить модель к печати. Небольшую правку геометрии сделаем бесплатно.</p>
+            </div>
+          </div>
+          <div class="faq-item reveal">
+            <button type="button" class="faq-item__question" aria-expanded="false">
+              <span>Это безопасно для дома и детей?</span>
+              <span class="faq-item__plus" aria-hidden="true"></span>
+            </button>
+            <div class="faq-item__answer">
+              <p>PLA и PETG не имеют запаха и не выделяют вредных веществ при обычной эксплуатации. Края обрабатываем вручную, мелкие съёмные детали делаем безопасными. Лампы комплектуем сертифицированной LED-лентой.</p>
+            </div>
+          </div>
+          <div class="faq-item reveal">
+            <button type="button" class="faq-item__question" aria-expanded="false">
+              <span>А если изделие не понравится?</span>
+              <span class="faq-item__plus" aria-hidden="true"></span>
+            </button>
+            <div class="faq-item__answer">
+              <p>Перед отправкой показываем фото готовой вещи. Если обнаружится брак печати — перепечатаем или вернём деньги. Индивидуальные модели с уникальной геометрией возврату не подлежат, но мы всегда ищем решение.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Подвал -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__top">
+        <div class="footer__brand">
+          <a class="logo logo--footer" href="#top">
+            <span class="logo__mark" aria-hidden="true">
+              <svg viewBox="0 0 40 40" fill="none">
+                <path d="M20 3 37 12.5 20 22 3 12.5 20 3Z" fill="currentColor"/>
+                <path d="m3 20 17 9.5L37 20" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="m3 27 17 9.5L37 27" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+            <span class="logo__text">СЛОЙ<span class="logo__dot">.</span><small>3D-студия</small></span>
+          </a>
+          <p>Печатаем полезные вещи слой за слоем. Небольшая мастерская в {{ site.city }}е, большая любовь к деталям.</p>
+          <div class="footer__socials">
+            <a href="{{ site.telegram }}" target="_blank" rel="noopener">Telegram <span aria-hidden="true">↗</span></a>
+            <a href="{{ site.vk }}" target="_blank" rel="noopener">ВКонтакте <span aria-hidden="true">↗</span></a>
+          </div>
+        </div>
+
+        <nav class="footer__nav" aria-label="Навигация в подвале">
+          <p>Навигация</p>
+          <a href="#catalog">Каталог</a>
+          <a href="#popular">Популярное</a>
+          <a href="#new">Новинки</a>
+          <a href="#process">Как это работает</a>
+          <a href="#faq">Вопросы</a>
+        </nav>
+
+        <div class="footer__contacts">
+          <p>Связаться</p>
+          <a class="footer__phone" href="tel:{{ site.phone|replace(' ', '')|replace('(', '')|replace(')', '')|replace('-', '') }}">{{ site.phone }}</a>
+          <a href="mailto:{{ site.email }}">{{ site.email }}</a>
+          <span>{{ site.work_hours }}</span>
+          <span>{{ site.city }} · доставка по России</span>
+          <button class="btn btn--lime btn--sm" type="button" data-open-custom>Оставить заявку</button>
+        </div>
+      </div>
+
+      <div class="footer__bottom">
+        <span>© 2026 {{ site.brand }}. Все права защищены.</span>
+        <span>Сделано с любовью к деталям и слоям.</span>
+        <a href="#top">Наверх ↑</a>
+      </div>
+
+      <div class="footer__word" aria-hidden="true">СЛОЙ</div>
+    </div>
+  </footer>
+
+
+
+  <!-- Данные товаров для JavaScript (модальные окна) -->
+  <script id="products-data" type="application/json">{{ products_json|tojson }}</script>
+
+  <!-- Модальное окно изделия -->
+  <dialog class="modal modal--product" id="product-modal" aria-labelledby="product-modal-title">
+    <div class="modal__inner">
+      <button class="modal__close" type="button" data-close-modal aria-label="Закрыть">
+        <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m5 5 10 10M15 5 5 15" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+      </button>
+
+      <div class="modal__media">
+        <img id="modal-image" src="" alt="" width="800" height="600">
+        <span class="badge modal__badge" id="modal-badge" hidden></span>
+      </div>
+
+      <div class="modal__content">
+        <p class="eyebrow" id="modal-category"></p>
+        <h2 id="product-modal-title"></h2>
+        <div class="modal__rating">
+          <span class="stars" aria-hidden="true">★★★★★</span>
+          <strong id="modal-rating"></strong>
+          <span id="modal-reviews"></span>
+        </div>
+        <p class="modal__description" id="modal-description"></p>
+
+        <ul class="modal__features" id="modal-features"></ul>
+
+        <div class="spec-grid" id="modal-specs"></div>
+
+        <div class="modal__tags" id="modal-tags"></div>
+
+        <div class="modal__footer">
+          <div class="modal__price">
+            <strong id="modal-price"></strong>
+            <s id="modal-old-price"></s>
+          </div>
+          <div class="modal__actions">
+            <button class="btn btn--accent" type="button" id="modal-order">Заказать изделие</button>
+            <a class="btn btn--ghost" id="modal-link" href="#" target="_blank" rel="noopener">Ссылка на изделие ↗</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Модальное окно заявки -->
+  <dialog class="modal modal--order" id="order-modal" aria-labelledby="order-title">
+    <button class="modal__close" type="button" data-close-modal aria-label="Закрыть">
+      <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m5 5 10 10M15 5 5 15" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+    </button>
+
+    <div class="order" id="order-form-view">
+      <p class="eyebrow"><span class="eyebrow__dot"></span> Заявка на печать</p>
+      <h2 id="order-title">Обсудим ваш заказ</h2>
+      <p class="order__lead" id="order-subtitle">Оставьте контакт — вернёмся с ценой, сроком и вариантами цвета.</p>
+
+      <div class="order__product" id="order-product" hidden>
+        <span>Изделие</span>
+        <strong id="order-product-name"></strong>
+        <b id="order-product-price"></b>
+      </div>
+
+      <form id="order-form" novalidate>
+        <input type="hidden" name="product" id="order-product-input" value="Своя идея">
+
+        <label class="field">
+          <span>Как к вам обращаться?</span>
+          <input type="text" name="name" placeholder="Например, Аня" autocomplete="name" required maxlength="120">
+        </label>
+
+        <label class="field">
+          <span>Телефон, Telegram или e-mail</span>
+          <input type="text" name="contact" placeholder="@nickname или +7 999 000-00-00" autocomplete="tel" required maxlength="200">
+        </label>
+
+        <label class="field">
+          <span>Комментарий <small>необязательно</small></span>
+          <textarea name="comment" rows="3" placeholder="Цвет, размер, идея или ссылка на файл" maxlength="2000"></textarea>
+        </label>
+
+        <label class="checkbox">
+          <input type="checkbox" name="consent" required>
+          <span>Согласен на обработку персональных данных. Используем их только для ответа на заявку.</span>
+        </label>
+
+        <p class="form-error" id="order-error" role="alert" hidden></p>
+
+        <button class="btn btn--accent btn--full" type="submit" id="order-submit">
+          Отправить заявку
+          <svg class="btn__arrow" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <p class="form-note">Это не оплата. Сначала согласуем детали и цену.</p>
+      </form>
+    </div>
+
+    <div class="order__success" id="order-success" hidden>
+      <div class="success-check" aria-hidden="true">
+        <svg viewBox="0 0 64 64" fill="none">
+          <circle cx="32" cy="32" r="28" stroke="currentColor" stroke-width="2.5" opacity=".25"/>
+          <path class="success-check__path" d="m20 33 8 8 17-18" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <h2>Заявка улетела!</h2>
+      <p>Спасибо! Свяжемся с вами в течение рабочего дня — обсудим цвет, материал и срок.</p>
+      <button class="btn btn--accent" type="button" data-close-modal>Отлично, жду</button>
+    </div>
+  </dialog>
+
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

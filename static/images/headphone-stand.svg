@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label="Стойка для наушников на столе">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#eeebf8"/>
+      <stop offset="1" stop-color="#dcd5ee"/>
+    </linearGradient>
+    <linearGradient id="stand" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#9fa8c9"/>
+      <stop offset=".45" stop-color="#828db4"/>
+      <stop offset="1" stop-color="#66719a"/>
+    </linearGradient>
+    <linearGradient id="bar" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#9ba5c6"/>
+      <stop offset="1" stop-color="#6f7a9f"/>
+    </linearGradient>
+    <filter id="blur" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="15"/>
+    </filter>
+    <filter id="soft" x="-40%" y="-40%" width="180%" height="180%">
+      <feDropShadow dx="0" dy="10" stdDeviation="9" flood-color="#4b4665" flood-opacity=".22"/>
+    </filter>
+    <pattern id="dots" width="19" height="19" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.4" fill="#7a7398" opacity=".3"/>
+    </pattern>
+  </defs>
+
+  <rect width="800" height="600" fill="url(#bg)"/>
+  <circle cx="650" cy="116" r="178" fill="#e5e0f4" opacity=".9"/>
+  <path d="M146 600V330a254 254 0 0 1 508 0v270Z" fill="#e6e1f4" opacity=".65"/>
+  <rect x="66" y="382" width="154" height="118" fill="url(#dots)" opacity=".55"/>
+
+  <ellipse cx="400" cy="505" rx="176" ry="25" fill="#4a4561" opacity=".2" filter="url(#blur)"/>
+
+  <!-- Основание -->
+  <g filter="url(#soft)">
+    <ellipse cx="400" cy="486" rx="118" ry="27" fill="#5d688e"/>
+    <ellipse cx="400" cy="479" rx="118" ry="25" fill="#8b96ba"/>
+    <ellipse cx="400" cy="474" rx="92" ry="16" fill="#9da8c8" opacity=".65"/>
+  </g>
+  <g fill="#4d5678">
+    <ellipse cx="336" cy="502" rx="16" ry="6"/>
+    <ellipse cx="464" cy="502" rx="16" ry="6"/>
+  </g>
+
+  <!-- Стойка -->
+  <path d="M386 252h28v224h-28Z" fill="url(#stand)"/>
+  <path d="M390 258h6v210h-6Z" fill="#b6bfdc" opacity=".65"/>
+  <rect x="294" y="238" width="212" height="30" rx="15" fill="url(#bar)"/>
+  <rect x="304" y="243" width="192" height="6" rx="3" fill="#c3cbe5" opacity=".55"/>
+  <circle cx="400" cy="306" r="7" fill="#e2f36c"/>
+
+  <!-- Наушники -->
+  <path d="M306 252C306 148 494 148 494 252" fill="none" stroke="#2a2d35" stroke-width="21" stroke-linecap="round"/>
+  <path d="M313 250C313 163 487 163 487 250" fill="none" stroke="#3b3f4a" stroke-width="9" stroke-linecap="round"/>
+  <path d="M320 218C334 178 370 162 402 162" fill="none" stroke="#656a78" stroke-width="4" stroke-linecap="round" opacity=".7"/>
+
+  <g filter="url(#soft)">
+    <rect x="284" y="238" width="42" height="88" rx="20" fill="#2a2d35"/>
+    <rect x="474" y="238" width="42" height="88" rx="20" fill="#2a2d35"/>
+    <rect x="293" y="248" width="24" height="66" rx="12" fill="#3a3e49"/>
+    <rect x="483" y="248" width="24" height="66" rx="12" fill="#3a3e49"/>
+    <path d="M298 256h14M488 256h14" stroke="#e2f36c" stroke-width="3" stroke-linecap="round" opacity=".8"/>
+  </g>
+
+  <!-- Кабель -->
+  <path d="M516 314c18 24 10 52 2 78-8 24-4 46 14 58" fill="none" stroke="#2a2d35" stroke-width="3.5" stroke-linecap="round"/>
+  <path d="M536 448c10 2 16 8 18 18" fill="none" stroke="#2a2d35" stroke-width="5" stroke-linecap="round"/>
+
+  <g fill="#e2f36c">
+    <circle cx="602" cy="378" r="3.5" opacity=".8"/>
+    <circle cx="246" cy="412" r="2.5" opacity=".6"/>
+  </g>
+</svg>

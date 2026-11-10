@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label="Крышка-лейка для пластиковой бутылки">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e9f3f5"/>
+      <stop offset="1" stop-color="#d4e8ec"/>
+    </linearGradient>
+    <linearGradient id="bottle" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e8f3f1"/>
+      <stop offset=".5" stop-color="#c9e1df"/>
+      <stop offset="1" stop-color="#a9cdca"/>
+    </linearGradient>
+    <linearGradient id="cap" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#43b3a6"/>
+      <stop offset="1" stop-color="#217d75"/>
+    </linearGradient>
+    <linearGradient id="pot" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#dc987a"/>
+      <stop offset="1" stop-color="#b35a3f"/>
+    </linearGradient>
+    <radialGradient id="sun" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#f7ecc8"/>
+      <stop offset="1" stop-color="#f7ecc8" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="blur" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="15"/>
+    </filter>
+    <filter id="soft" x="-40%" y="-40%" width="180%" height="180%">
+      <feDropShadow dx="0" dy="10" stdDeviation="9" flood-color="#436b6f" flood-opacity=".2"/>
+    </filter>
+    <clipPath id="bottleClip">
+      <rect x="346" y="260" width="168" height="262" rx="34"/>
+    </clipPath>
+    <pattern id="dots" width="19" height="19" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.4" fill="#6c9498" opacity=".3"/>
+    </pattern>
+  </defs>
+
+  <rect width="800" height="600" fill="url(#bg)"/>
+  <circle cx="648" cy="118" r="190" fill="url(#sun)"/>
+  <path d="M146 600V330a254 254 0 0 1 508 0v270Z" fill="#e3eff1" opacity=".8"/>
+  <rect x="598" y="78" width="140" height="110" fill="url(#dots)" opacity=".5"/>
+  <ellipse cx="380" cy="530" rx="190" ry="24" fill="#436b6f" opacity=".17" filter="url(#blur)"/>
+
+  <!-- Растение -->
+  <g>
+    <path d="M155 461h104l-12 68q-2 14-16 14h-48q-14 0-16-14Z" fill="url(#pot)" filter="url(#soft)"/>
+    <rect x="146" y="450" width="122" height="24" rx="12" fill="#de9c7d"/>
+    <g stroke="#6f8d5e" stroke-width="3.5" stroke-linecap="round" fill="none">
+      <path d="M207 450c-4-34-16-54-38-70"/>
+      <path d="M214 450c6-38 22-58 46-70"/>
+      <path d="M210 450c0-28 8-46 24-58"/>
+    </g>
+    <g fill="#7fa06b">
+      <path d="M169 380c-30-2-52-22-58-52 30 0 54 20 58 52Z"/>
+      <path d="M260 380c30-4 50-26 54-56-30 2-52 24-54 56Z"/>
+      <path d="M234 392c24-10 36-32 34-60-24 10-36 32-34 60Z"/>
+      <path d="M178 410c-24 4-46-8-58-30 24-4 46 8 58 30Z"/>
+    </g>
+    <g fill="#5f7f55" opacity=".6">
+      <path d="M160 370c-18-2-30-14-34-30 18 2 30 12 34 30Z"/>
+      <path d="M244 372c18-4 30-16 32-32-18 4-30 14-32 32Z"/>
+    </g>
+  </g>
+
+  <!-- Бутылка с лейкой -->
+  <g transform="rotate(-24 420 340)" filter="url(#soft)">
+    <rect x="391" y="204" width="58" height="66" rx="8" fill="#cfe5e3"/>
+    <rect x="346" y="260" width="168" height="262" rx="34" fill="url(#bottle)"/>
+    <g clip-path="url(#bottleClip)">
+      <path d="M346 410c20-10 32 8 52 0s34-10 54 0 34 8 62-2v114H346Z" fill="#9ac9c6" opacity=".75"/>
+      <path d="M346 428c18-8 30 6 48 0s32-9 50 0 30 7 70-4" fill="none" stroke="#cbe8e4" stroke-width="3" opacity=".8"/>
+      <rect x="346" y="330" width="168" height="92" fill="#fff8e8" opacity=".92"/>
+      <path d="M376 376c0-14 10-26 24-26 2-12 12-20 24-20 14 0 24 10 26 22 10 2 16 10 16 20H376Z" fill="#7fa06b" opacity=".8"/>
+      <path d="M412 392h36" stroke="#b9a98d" stroke-width="3" stroke-linecap="round"/>
+      <path d="M360 286c-8 46-8 128-2 202" stroke="#ffffff" stroke-width="8" stroke-linecap="round" opacity=".45"/>
+    </g>
+    <rect x="391" y="204" width="58" height="66" rx="8" fill="none" stroke="#a9cdca" stroke-width="2"/>
+    <rect x="378" y="184" width="84" height="34" rx="10" fill="url(#cap)"/>
+    <path d="M386 184c0-20 15-36 34-36s34 16 34 36Z" fill="url(#cap)"/>
+    <ellipse cx="420" cy="148" rx="40" ry="13" fill="#1f746d"/>
+    <ellipse cx="420" cy="146" rx="33" ry="9" fill="#2b8d83"/>
+    <g fill="#8ed3c9">
+      <circle cx="405" cy="146" r="2.2"/>
+      <circle cx="420" cy="143" r="2.2"/>
+      <circle cx="435" cy="147" r="2.2"/>
+      <circle cx="412" cy="151" r="1.7"/>
+      <circle cx="428" cy="151" r="1.7"/>
+    </g>
+    <rect x="378" y="190" width="84" height="6" rx="3" fill="#e2f36c" opacity=".9"/>
+  </g>
+
+  <!-- Капли -->
+  <g fill="#6ab7b2">
+    <path d="M330 218c0 8-6 14-14 14s-14-6-14-14 14-24 14-24 14 16 14 24Z" opacity=".9"/>
+    <path d="M300 268c0 6-4 10-10 10s-10-4-10-10 10-18 10-18 10 12 10 18Z" opacity=".75"/>
+    <path d="M272 320c0 5-4 9-9 9s-9-4-9-9 9-16 9-16 9 11 9 16Z" opacity=".6"/>
+    <circle cx="256" cy="374" r="5" opacity=".7"/>
+    <circle cx="246" cy="410" r="3.5" opacity=".55"/>
+  </g>
+  <path d="M326 232c-18 50-46 94-78 142" fill="none" stroke="#8fc9c4" stroke-width="2" stroke-dasharray="4 10" stroke-linecap="round" opacity=".55"/>
+</svg>

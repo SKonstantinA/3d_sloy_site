@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label="Ночник в форме облака с мягким светом">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#eeebf7"/>
+      <stop offset="1" stop-color="#d5cfeb"/>
+    </linearGradient>
+    <linearGradient id="cloud" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fffdf6"/>
+      <stop offset=".7" stop-color="#f4efff"/>
+      <stop offset="1" stop-color="#ddd6f0"/>
+    </linearGradient>
+    <radialGradient id="glow" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#ffe9b5" stop-opacity=".95"/>
+      <stop offset=".55" stop-color="#ffdf9c" stop-opacity=".32"/>
+      <stop offset="1" stop-color="#ffdf9c" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="moon" cx=".35" cy=".3" r=".75">
+      <stop offset="0" stop-color="#fff9e8"/>
+      <stop offset="1" stop-color="#e8dfc2"/>
+    </radialGradient>
+    <filter id="blur" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="18"/>
+    </filter>
+    <filter id="soft" x="-40%" y="-40%" width="180%" height="180%">
+      <feDropShadow dx="0" dy="14" stdDeviation="12" flood-color="#5d547d" flood-opacity=".22"/>
+    </filter>
+    <clipPath id="cloudClip">
+      <path d="M238 404C208 404 190 384 190 360C190 334 212 316 238 318C240 282 268 256 302 256C320 228 354 216 382 230C400 206 438 206 456 230C486 222 514 242 518 272C548 272 570 294 570 324C570 352 548 370 520 372C518 390 502 404 482 404Z"/>
+    </clipPath>
+    <pattern id="dots" width="19" height="19" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.4" fill="#7b739b" opacity=".28"/>
+    </pattern>
+  </defs>
+
+  <rect width="800" height="600" fill="url(#bg)"/>
+  <circle cx="650" cy="118" r="92" fill="url(#moon)" opacity=".9"/>
+  <circle cx="624" cy="96" r="10" fill="#ded4b7" opacity=".5"/>
+  <circle cx="668" cy="142" r="7" fill="#ded4b7" opacity=".4"/>
+  <path d="M146 600V330a254 254 0 0 1 508 0v270Z" fill="#e4dff3" opacity=".6"/>
+  <rect x="62" y="82" width="150" height="112" fill="url(#dots)" opacity=".5"/>
+
+  <!-- Звёзды -->
+  <g fill="#fff6d8">
+    <path d="M190 154c2 10 4 12 14 14-10 2-12 4-14 14-2-10-4-12-14-14 10-2 12-4 14-14Z"/>
+    <path d="M606 254c1.6 8 3.2 9.6 11.2 11.2-8 1.6-9.6 3.2-11.2 11.2-1.6-8-3.2-9.6-11.2-11.2 8-1.6 9.6-3.2 11.2-11.2Z" opacity=".8"/>
+    <path d="M540 478c1.4 7 2.8 8.4 9.8 9.8-7 1.4-8.4 2.8-9.8 9.8-1.4-7-2.8-8.4-9.8-9.8 7-1.4 8.4-2.8 9.8-9.8Z" opacity=".7"/>
+    <path d="M246 468c1.2 6 2.4 7.2 8.4 8.4-6 1.2-7.2 2.4-8.4 8.4-1.2-6-2.4-7.2-8.4-8.4 6-1.2 7.2-2.4 8.4-8.4Z" opacity=".6"/>
+  </g>
+  <g fill="#e2f36c" opacity=".85">
+    <circle cx="554" cy="190" r="2.5"/>
+    <circle cx="230" cy="270" r="2"/>
+    <circle cx="606" cy="420" r="2.5"/>
+  </g>
+
+  <!-- Свечение -->
+  <ellipse cx="400" cy="420" rx="250" ry="120" fill="url(#glow)" opacity=".62" filter="url(#blur)"/>
+  <ellipse cx="400" cy="518" rx="170" ry="20" fill="#5d547d" opacity=".16" filter="url(#blur)"/>
+
+  <!-- Облако -->
+  <g filter="url(#soft)">
+    <path d="M238 404C208 404 190 384 190 360C190 334 212 316 238 318C240 282 268 256 302 256C320 228 354 216 382 230C400 206 438 206 456 230C486 222 514 242 518 272C548 272 570 294 570 324C570 352 548 370 520 372C518 390 502 404 482 404Z" fill="url(#cloud)"/>
+  </g>
+
+  <g clip-path="url(#cloudClip)" fill="none">
+    <path d="M196 350Q300 368 400 362T566 344" stroke="#d5cdea" stroke-width="3" opacity=".5"/>
+    <path d="M204 372Q302 390 400 384T560 366" stroke="#d5cdea" stroke-width="3" opacity=".4"/>
+    <path d="M230 394Q320 410 410 404T526 388" stroke="#ffd99a" stroke-width="5" opacity=".42"/>
+    <path d="M244 336C260 296 294 276 330 276" stroke="#ffffff" stroke-width="9" stroke-linecap="round" opacity=".65"/>
+  </g>
+  <path d="M238 404C330 420 416 420 482 404" fill="none" stroke="#c9c0e0" stroke-width="2" opacity=".55"/>
+
+  <!-- Маленькие звёздочки рядом с облаком -->
+  <g fill="#fff5cd" opacity=".9">
+    <path d="M508 322c1.5 7.5 3 9 10.5 10.5-7.5 1.5-9 3-10.5 10.5-1.5-7.5-3-9-10.5-10.5 7.5-1.5 9-3 10.5-10.5Z"/>
+    <path d="M286 300c1.2 6 2.4 7.2 8.4 8.4-6 1.2-7.2 2.4-8.4 8.4-1.2-6-2.4-7.2-8.4-8.4 6-1.2 7.2-2.4 8.4-8.4Z" opacity=".7"/>
+  </g>
+</svg>

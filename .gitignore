@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+orders.json
+.vscode/
+.idea/
+.DS_Store
+
+# Видео и другие тяжёлые материалы не храним в репозитории
+*.mp4
+
