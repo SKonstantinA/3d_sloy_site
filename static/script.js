@@ -484,6 +484,7 @@ const sortValue = $("#sort-value");
 const sortOptions = sortMenu ? $$('[role="option"]', sortMenu) : [];
 const tabs = $$(".tab");
 const chips = $$(".chip");
+const tagChips = chips.filter((chip) => chip.dataset.tag !== "all");
 
 const filterState = {
   tab: "all",
@@ -498,6 +499,38 @@ function cardMatches(card, query) {
   const matchTag = filterState.tag === "all" || cardTags.includes(filterState.tag);
   const matchQuery = !query || normalize(card.dataset.search).includes(query);
   return matchTab && matchTag && matchQuery;
+}
+
+// Показываем только теги, которые встречаются в активной категории,
+// и пересчитываем их количество по карточкам этой категории.
+function updateTagAvailability() {
+  const tab = filterState.tab;
+  const tabCards =
+    tab === "all" ? catalogCards : catalogCards.filter((card) => card.dataset[tab] === "1");
+
+  const counts = new Map();
+  tabCards.forEach((card) => {
+    (card.dataset.tags || "").split("|").forEach((tag) => {
+      if (!tag) return;
+      counts.set(tag, (counts.get(tag) || 0) + 1);
+    });
+  });
+
+  tagChips.forEach((chip) => {
+    const count = counts.get(chip.dataset.tag) || 0;
+    chip.hidden = count === 0;
+
+    const countEl = chip.querySelector("span");
+    if (countEl) countEl.textContent = String(count);
+  });
+
+  // Если выбранный тег отсутствует в новой категории — снимаем фильтр.
+  if (filterState.tag !== "all" && !counts.has(filterState.tag)) {
+    filterState.tag = "all";
+    chips.forEach((chip) => {
+      chip.classList.toggle("is-active", chip.dataset.tag === "all");
+    });
+  }
 }
 
 function sortCards() {
@@ -581,6 +614,7 @@ function setTab(tabName) {
     tab.setAttribute("aria-selected", String(active));
   });
 
+  updateTagAvailability();
   applyFilters();
 }
 
@@ -733,6 +767,7 @@ function resetAllFilters() {
     chip.classList.toggle("is-active", chip.dataset.tag === "all");
   });
 
+  updateTagAvailability();
   applyFilters();
 }
 
@@ -827,6 +862,7 @@ railNext?.addEventListener("click", () => scrollRail(1));
 
 /* ---------- Старт ---------- */
 
+updateTagAvailability();
 applyFilters();
 
 // Если пользователь вернулся на страницу с уже выбранной сортировкой —
