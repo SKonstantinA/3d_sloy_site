@@ -291,6 +291,7 @@ function openOrder(product = null) {
 function resetOrderForm() {
   if (!orderForm) return;
   orderForm.reset();
+  clearFieldErrors();
   orderError.hidden = true;
   orderError.textContent = "";
   orderSubmit.disabled = false;
@@ -305,6 +306,52 @@ function showOrderError(message) {
   orderError.textContent = message;
   orderError.hidden = false;
 }
+
+function clearFieldError(fieldName) {
+  if (!orderForm) return;
+  const message = orderForm.querySelector(`[data-error-for="${fieldName}"]`);
+  const input = orderForm.elements[fieldName];
+  if (message) {
+    message.textContent = "";
+    message.hidden = true;
+  }
+  if (input) input.removeAttribute("aria-invalid");
+}
+
+function clearFieldErrors() {
+  if (!orderForm) return;
+  orderForm.querySelectorAll("[data-error-for]").forEach((message) => {
+    message.textContent = "";
+    message.hidden = true;
+  });
+  orderForm.querySelectorAll('[aria-invalid="true"]').forEach((input) => {
+    input.removeAttribute("aria-invalid");
+  });
+}
+
+function showFieldError(fieldName, message) {
+  if (!orderForm) return;
+  const messageEl = orderForm.querySelector(`[data-error-for="${fieldName}"]`);
+  const input = orderForm.elements[fieldName];
+
+  if (messageEl) {
+    messageEl.textContent = message;
+    messageEl.hidden = false;
+  }
+  if (input) {
+    input.setAttribute("aria-invalid", "true");
+    input.focus();
+  }
+}
+
+// Как только поле заполняют, убираем ошибку именно у него
+orderForm?.addEventListener("input", (event) => {
+  if (event.target.name) clearFieldError(event.target.name);
+});
+
+orderForm?.addEventListener("change", (event) => {
+  if (event.target.name) clearFieldError(event.target.name);
+});
 
 // Клики по кнопкам «Посмотреть подробно», «Заказать», «Своя идея»
 document.addEventListener("click", (event) => {
@@ -354,6 +401,7 @@ $("#modal-order")?.addEventListener("click", () => {
 orderForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
   orderError.hidden = true;
+  clearFieldErrors();
 
   const formData = new FormData(orderForm);
   const name = String(formData.get("name") || "").trim();
@@ -362,19 +410,17 @@ orderForm?.addEventListener("submit", async (event) => {
   const consent = formData.get("consent");
 
   if (!name) {
-    showOrderError("Напишите, как к вам обращаться.");
-    orderForm.querySelector('input[name="name"]').focus();
+    showFieldError("name", "Напишите, как к вам обращаться.");
     return;
   }
 
   if (!contact) {
-    showOrderError("Оставьте телефон, Telegram или e-mail для связи.");
-    orderForm.querySelector('input[name="contact"]').focus();
+    showFieldError("contact", "Оставьте телефон, Telegram или e-mail для связи.");
     return;
   }
 
   if (!consent) {
-    showOrderError("Нужно согласие на обработку данных, чтобы мы могли ответить.");
+    showFieldError("consent", "Нужно согласие на обработку данных, чтобы мы могли ответить.");
     return;
   }
 

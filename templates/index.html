@@ -74,7 +74,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:wght@500;600;700&family=Lora:ital,wght@1,500;1,600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-<body>
+<body id="top">
   <a class="skip-link" href="#catalog">Перейти к каталогу</a>
 
   <!-- Если JavaScript выключен, каталог всё равно виден, но фильтры и форма не работают -->
@@ -89,8 +89,8 @@
   <!-- Бегущая строка сверху -->
   <div class="ticker" aria-hidden="true">
     <div class="ticker__track">
-      <span>Печать на заказ <b>✳</b> PLA / PETG <b>✳</b> доставка по России <b>✳</b> ручная работа <b>✳</b> упаковка без пластика <b>✳</b></span>
-      <span>Печать на заказ <b>✳</b> PLA / PETG <b>✳</b> доставка по России <b>✳</b> ручная работа <b>✳</b> упаковка без пластика <b>✳</b></span>
+      <span>Печать на заказ <b>✳</b> PLA / PETG <b>✳</b> доставка по России <b>✳</b> сборка и доводка <b>✳</b> надёжная упаковка <b>✳</b></span>
+      <span>Печать на заказ <b>✳</b> PLA / PETG <b>✳</b> доставка по России <b>✳</b> сборка и доводка <b>✳</b> надёжная упаковка <b>✳</b></span>
     </div>
   </div>
 
@@ -145,7 +145,7 @@
     </div>
   </header>
 
-  <main id="top">
+  <main>
     <!-- Первый экран -->
     <section class="hero">
       <div class="hero__glow" aria-hidden="true"></div>
@@ -246,7 +246,7 @@
                 <path id="badge-circle" d="M60,60 m-43,0 a43,43 0 1,1 86,0 a43,43 0 1,1 -86,0"/>
               </defs>
               <text>
-                <textPath href="#badge-circle">СЛОЙ · ПЕЧАТЬ НА ЗАКАЗ · СЛОЙ · ВРУЧНУЮ · </textPath>
+                <textPath href="#badge-circle">СЛОЙ · ПЕЧАТЬ НА ЗАКАЗ · СЛОЙ · С ЗАБОТОЙ · </textPath>
               </text>
             </svg>
             <span class="spin-badge__arrow">↗</span>
@@ -383,7 +383,9 @@
               <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m4 6 4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </label>
           </div>
+        </div>
 
+        <div class="tag-bar reveal">
           <div class="toolbar__bottom">
             <div class="tag-list" id="tag-list" role="group" aria-label="Фильтр по тегам">
               <button type="button" class="chip is-active" data-tag="all">Все теги</button>
@@ -453,7 +455,7 @@
               </svg>
             </div>
             <h3>Согласуем детали</h3>
-            <p>Подбираем цвет, материал и толщину слоя. Фиксируем цену и срок до начала печати.</p>
+            <p>Подбираем цвет и материал, обсуждаем детали. Фиксируем цену и срок до начала печати.</p>
           </li>
           <li class="step reveal" style="--delay: .16s">
             <span class="step__num">03</span>
@@ -475,7 +477,7 @@
               </svg>
             </div>
             <h3>Упаковываем и отправляем</h3>
-            <p>Кладём в крафт-упаковку без лишнего пластика. Доставка 2–5 дней по России.</p>
+            <p>Бережно упаковываем в крафт-бумагу и отправляем. Доставка 2–5 дней по России.</p>
           </li>
         </ol>
 
@@ -603,7 +605,7 @@
             </span>
             <span class="logo__text">СЛОЙ<span class="logo__dot">.</span><small>3D-студия</small></span>
           </a>
-          <p>Печатаем полезные вещи слой за слоем. Небольшая мастерская в {{ site.city }}е, большая любовь к деталям.</p>
+          <p>Печатаем полезные вещи слой за слоем. Небольшая мастерская в {{ site.city_in }}, большая любовь к деталям.</p>
           <div class="footer__socials">
             <a href="{{ site.telegram }}" target="_blank" rel="noopener">Telegram <span aria-hidden="true">↗</span></a>
             <a href="{{ site.vk }}" target="_blank" rel="noopener">ВКонтакте <span aria-hidden="true">↗</span></a>
@@ -708,12 +710,14 @@
 
         <label class="field">
           <span>Как к вам обращаться?</span>
-          <input type="text" name="name" placeholder="Например, Аня" autocomplete="name" required maxlength="120">
+          <input type="text" name="name" placeholder="Например, Аня" autocomplete="name" required maxlength="120" aria-describedby="error-name">
+          <span class="field__error" id="error-name" data-error-for="name" role="alert" hidden></span>
         </label>
 
         <label class="field">
           <span>Телефон, Telegram или e-mail</span>
-          <input type="text" name="contact" placeholder="@nickname или +7 999 000-00-00" autocomplete="tel" required maxlength="200">
+          <input type="text" name="contact" placeholder="@nickname или +7 999 000-00-00" autocomplete="tel" required maxlength="200" aria-describedby="error-contact">
+          <span class="field__error" id="error-contact" data-error-for="contact" role="alert" hidden></span>
         </label>
 
         <label class="field">
@@ -722,9 +726,10 @@
         </label>
 
         <label class="checkbox">
-          <input type="checkbox" name="consent" required>
+          <input type="checkbox" name="consent" required aria-describedby="error-consent">
           <span>Согласен на обработку персональных данных. Используем их только для ответа на заявку.</span>
         </label>
+        <span class="field__error field__error--consent" id="error-consent" data-error-for="consent" role="alert" hidden></span>
 
         <p class="form-error" id="order-error" role="alert" hidden></p>
 

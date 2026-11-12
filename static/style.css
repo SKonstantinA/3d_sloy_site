@@ -45,7 +45,6 @@
 
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: calc(var(--header-height) + 24px);
   -webkit-text-size-adjust: 100%;
 }
 
@@ -185,8 +184,11 @@ p {
 }
 
 .section {
-  padding: 104px 0;
-  scroll-margin-top: 92px;
+  --section-pad-top: 104px;
+  padding: var(--section-pad-top) 0;
+  /* Заголовок раздела встаёт под шапкой с отступом 18px,
+     даже если у самого раздела большой верхний padding. */
+  scroll-margin-top: calc(var(--header-height) + 18px - var(--section-pad-top));
 }
 
 .section-head {
@@ -437,10 +439,6 @@ p {
   align-items: center;
   height: 100%;
   animation: ticker 34s linear infinite;
-}
-
-.ticker:hover .ticker__track {
-  animation-play-state: paused;
 }
 
 .ticker__track span {
@@ -1482,6 +1480,7 @@ p {
   gap: 22px;
   overflow-x: auto;
   padding: 6px max(16px, calc((100vw - 1240px) / 2)) 26px;
+  scroll-padding-inline: max(16px, calc((100vw - 1240px) / 2));
   scroll-snap-type: x mandatory;
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -1499,9 +1498,6 @@ p {
 /* ---------- Каталог ---------- */
 
 .catalog-toolbar {
-  position: sticky;
-  top: calc(var(--header-height) + 12px);
-  z-index: 30;
   padding: 16px;
   border: 1px solid var(--line);
   border-radius: 26px;
@@ -1675,11 +1671,26 @@ p {
   pointer-events: none;
 }
 
+.tag-bar {
+  position: sticky;
+  top: calc(var(--header-height) + 10px);
+  z-index: 30;
+  width: fit-content;
+  max-width: min(100%, 720px);
+  margin-top: 13px;
+}
+
 .toolbar__bottom {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-top: 13px;
+  gap: 10px;
+  padding: 7px 9px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: rgba(255, 253, 248, 0.9);
+  box-shadow: 0 16px 40px -30px rgba(35, 28, 20, 0.44);
+  backdrop-filter: blur(14px) saturate(1.1);
+  -webkit-backdrop-filter: blur(14px) saturate(1.1);
 }
 
 .tag-list {
@@ -2111,10 +2122,6 @@ p {
 
 /* ---------- Вопросы ---------- */
 
-.faq {
-  padding-top: 96px;
-}
-
 .faq__inner {
   display: grid;
   grid-template-columns: 0.78fr 1.22fr;
@@ -2372,9 +2379,12 @@ p {
 /* ---------- Модальные окна ---------- */
 
 dialog.modal {
-  width: auto;
-  max-width: none;
-  max-height: none;
+  position: fixed;
+  inset: 0;
+  width: fit-content;
+  max-width: calc(100vw - 24px);
+  height: fit-content;
+  max-height: calc(100dvh - 32px);
   margin: auto;
   padding: 0;
   border: 0;
@@ -2396,10 +2406,12 @@ dialog.modal::backdrop {
   grid-template-columns: 0.9fr 1.1fr;
   width: min(1000px, calc(100vw - 40px));
   max-height: calc(100dvh - 40px);
-  border-radius: 30px;
+  border-radius: 18px;
   background: var(--card);
   box-shadow: var(--shadow-lg);
   overflow: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(23, 26, 31, 0.26) transparent;
   animation: modal-in 0.45s var(--ease);
 }
 
@@ -2455,6 +2467,39 @@ dialog.modal::backdrop {
   overflow-y: auto;
   padding: 38px 36px 30px;
   overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(23, 26, 31, 0.26) transparent;
+  scrollbar-gutter: stable;
+}
+
+/* Аккуратный тонкий скроллбар без обрезанных стрелок */
+.modal__content::-webkit-scrollbar,
+.modal__inner::-webkit-scrollbar,
+dialog.modal--order::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.modal__content::-webkit-scrollbar-track,
+.modal__inner::-webkit-scrollbar-track,
+dialog.modal--order::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.modal__content::-webkit-scrollbar-thumb,
+.modal__inner::-webkit-scrollbar-thumb,
+dialog.modal--order::-webkit-scrollbar-thumb {
+  border: 3px solid transparent;
+  border-radius: 999px;
+  background: rgba(23, 26, 31, 0.26);
+  background-clip: content-box;
+}
+
+.modal__content::-webkit-scrollbar-thumb:hover,
+.modal__inner::-webkit-scrollbar-thumb:hover,
+dialog.modal--order::-webkit-scrollbar-thumb:hover {
+  background: rgba(23, 26, 31, 0.42);
+  background-clip: content-box;
 }
 
 .modal__content h2 {
@@ -2598,14 +2643,17 @@ dialog.modal::backdrop {
 
 /* Заявка */
 
-.modal--order {
+dialog.modal.modal--order {
   width: min(560px, calc(100vw - 32px));
   max-height: calc(100dvh - 32px);
   padding: 34px;
-  border-radius: 30px;
+  border-radius: 22px;
   background: var(--card);
   box-shadow: var(--shadow-lg);
   overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(23, 26, 31, 0.26) transparent;
   animation: modal-in 0.45s var(--ease);
 }
 
@@ -2707,6 +2755,29 @@ dialog.modal::backdrop {
 .field input::placeholder,
 .field textarea::placeholder {
   color: #aaa69e;
+}
+
+/* Ошибки полей показываются прямо под соответствующим полем */
+.field input[aria-invalid="true"],
+.field textarea[aria-invalid="true"] {
+  border-color: var(--accent-strong);
+  box-shadow: 0 0 0 3px rgba(195, 63, 24, 0.12);
+}
+
+.field__error {
+  font-size: 0.68rem;
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--accent-deep);
+}
+
+.field__error--consent {
+  margin-top: -4px;
+}
+
+.checkbox input[aria-invalid="true"] {
+  outline: 2px solid var(--accent-strong);
+  outline-offset: 2px;
 }
 
 .checkbox {
@@ -2897,7 +2968,8 @@ dialog.modal::backdrop {
   }
 
   .section {
-    padding: 86px 0;
+    --section-pad-top: 86px;
+    padding: var(--section-pad-top) 0;
   }
 
   .catalog-grid {
@@ -3089,7 +3161,8 @@ dialog.modal::backdrop {
   }
 
   .section {
-    padding: 68px 0;
+    --section-pad-top: 68px;
+    padding: var(--section-pad-top) 0;
   }
 
   .section-head {
@@ -3229,7 +3302,7 @@ dialog.modal::backdrop {
     grid-template-columns: 1fr;
     width: calc(100vw - 24px);
     max-height: calc(100dvh - 24px);
-    border-radius: 24px;
+    border-radius: 16px;
     overflow-y: auto;
   }
 
@@ -3436,10 +3509,10 @@ dialog.modal::backdrop {
     font-size: 0.55rem;
   }
 
-  .modal--order {
-    width: calc(100vw - 20px);
+  dialog.modal.modal--order {
+    width: calc(100vw - 32px);
     padding: 26px 18px;
-    border-radius: 24px;
+    border-radius: 18px;
   }
 
   .spec-grid {
