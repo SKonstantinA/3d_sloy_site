@@ -372,16 +372,19 @@
               <kbd aria-hidden="true">/</kbd>
             </div>
 
-            <label class="sort">
-              <span class="sr-only">Сортировка</span>
-              <select id="sort-select">
-                <option value="default">По популярности</option>
-                <option value="new">Сначала новые</option>
-                <option value="price-asc">Сначала дешевле</option>
-                <option value="price-desc">Сначала дороже</option>
-              </select>
-              <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m4 6 4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </label>
+            <div class="sort" data-sort>
+              <span class="sr-only" id="sort-label">Сортировка</span>
+              <button type="button" class="sort__trigger" id="sort-trigger" aria-haspopup="listbox" aria-expanded="false" aria-controls="sort-menu" aria-labelledby="sort-label sort-value">
+                <span class="sort__value" id="sort-value">По популярности</span>
+                <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m4 6 4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+              <ul class="sort__menu" id="sort-menu" role="listbox" aria-labelledby="sort-label" tabindex="-1" hidden>
+                <li role="option" data-value="default" aria-selected="true" tabindex="-1">По популярности</li>
+                <li role="option" data-value="new" aria-selected="false" tabindex="-1">Сначала новые</li>
+                <li role="option" data-value="price-asc" aria-selected="false" tabindex="-1">Сначала дешевле</li>
+                <li role="option" data-value="price-desc" aria-selected="false" tabindex="-1">Сначала дороже</li>
+              </ul>
+            </div>
           </div>
 
           <div class="toolbar__bottom">

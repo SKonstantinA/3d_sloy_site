@@ -473,11 +473,15 @@ const catalogGrid = $("#catalog-grid");
 const catalogCards = catalogGrid ? $$(".product-card", catalogGrid) : [];
 const searchInput = $("#search-input");
 const searchClear = $("#search-clear");
-const sortSelect = $("#sort-select");
 const resultsCount = $("#results-count");
 const emptyState = $("#empty-state");
 const resetFilters = $("#reset-filters");
 const catalogToolbar = $(".catalog-toolbar");
+const sortRoot = $(".sort");
+const sortTrigger = $("#sort-trigger");
+const sortMenu = $("#sort-menu");
+const sortValue = $("#sort-value");
+const sortOptions = sortMenu ? $$('[role="option"]', sortMenu) : [];
 const tabs = $$(".tab");
 const chips = $$(".chip");
 
@@ -613,9 +617,97 @@ searchClear?.addEventListener("click", () => {
   searchInput.focus();
 });
 
-sortSelect?.addEventListener("change", () => {
-  filterState.sort = sortSelect.value;
+function syncSortUI(value) {
+  sortOptions.forEach((option) => {
+    const active = option.dataset.value === value;
+    option.setAttribute("aria-selected", String(active));
+    if (active && sortValue) sortValue.textContent = option.textContent.trim();
+  });
+}
+
+function setSortOpen(open, focusTarget) {
+  if (!sortMenu || !sortTrigger) return;
+  sortMenu.hidden = !open;
+  sortTrigger.setAttribute("aria-expanded", String(open));
+  if (!open) return;
+
+  const target =
+    focusTarget ||
+    sortOptions.find((option) => option.getAttribute("aria-selected") === "true") ||
+    sortOptions[0];
+  target?.focus();
+}
+
+function chooseSort(value) {
+  if (!value) return;
+  filterState.sort = value;
+  syncSortUI(value);
   applyFilters();
+  setSortOpen(false);
+  sortTrigger?.focus();
+}
+
+sortTrigger?.addEventListener("click", () => {
+  setSortOpen(sortMenu.hidden);
+});
+
+sortTrigger?.addEventListener("keydown", (event) => {
+  if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+    event.preventDefault();
+    const target =
+      event.key === "ArrowDown" ? sortOptions[0] : sortOptions[sortOptions.length - 1];
+    setSortOpen(true, target);
+  } else if (event.key === "Escape") {
+    setSortOpen(false);
+  }
+});
+
+sortMenu?.addEventListener("click", (event) => {
+  const option = event.target.closest('[role="option"]');
+  if (option) chooseSort(option.dataset.value);
+});
+
+sortMenu?.addEventListener("keydown", (event) => {
+  if (!sortOptions.length) return;
+  const index = sortOptions.indexOf(document.activeElement);
+  const move = (nextIndex) => {
+    event.preventDefault();
+    sortOptions[(nextIndex + sortOptions.length) % sortOptions.length]?.focus();
+  };
+
+  switch (event.key) {
+    case "ArrowDown":
+      move(index < 0 ? 0 : index + 1);
+      break;
+    case "ArrowUp":
+      move(index < 0 ? sortOptions.length - 1 : index - 1);
+      break;
+    case "Home":
+      move(0);
+      break;
+    case "End":
+      move(sortOptions.length - 1);
+      break;
+    case "Enter":
+    case " ":
+      event.preventDefault();
+      if (index >= 0) chooseSort(sortOptions[index].dataset.value);
+      break;
+    case "Escape":
+      event.preventDefault();
+      setSortOpen(false);
+      sortTrigger?.focus();
+      break;
+    case "Tab":
+      setSortOpen(false);
+      break;
+  }
+});
+
+document.addEventListener("click", (event) => {
+  if (!sortMenu || sortMenu.hidden) return;
+  if (sortRoot?.contains(event.target)) return;
+  setSortOpen(false);
 });
 
 resetFilters?.addEventListener("click", resetAllFilters);
@@ -628,7 +720,8 @@ function resetAllFilters() {
   filterState.sort = "default";
 
   if (searchInput) searchInput.value = "";
-  if (sortSelect) sortSelect.value = "default";
+  syncSortUI("default");
+  setSortOpen(false);
 
   tabs.forEach((tab) => {
     const active = tab.dataset.tab === "all";
@@ -737,8 +830,8 @@ railNext?.addEventListener("click", () => scrollRail(1));
 applyFilters();
 
 // Если пользователь вернулся на страницу с уже выбранной сортировкой —
-// просто синхронизируем селект с состоянием (на будущее).
-if (sortSelect) sortSelect.value = filterState.sort;
+// просто синхронизируем кастомный список с состоянием (на будущее).
+syncSortUI(filterState.sort);
 
 // Закрываем мобильное меню при клике вне шапки
 document.addEventListener("click", (event) => {
